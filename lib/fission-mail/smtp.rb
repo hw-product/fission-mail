@@ -46,12 +46,20 @@ module Fission
       def deliver(payload)
         config = payload[:data][:notification_email]
         begin
+          via_options = config.fetch(:via_options,
+            Carnivore::Config.get(:fission, :mail, :smtp, :via_options) || {}
+          )
+          via_options = Hash[
+            via_options.map do |k,v|
+              [k.to_sym, v]
+            end
+          ]
           args = {
             :to => [config[:destination]].flatten(1).map{|d| d[:email]},
             :from => config[:origin][:email],
             :subject => config[:subject],
             :via => :smtp,
-            :via_options => config[:via_options] || Carnivore::Config.get(:fission, :mail, :smtp, :via_options) || {}
+            :via_options => via_options
           }
           if(config[:attachments])
             args[:attachments] = Hash[*config[:attachments].map{|k,v|[k.to_s,v]}.flatten(1)]
