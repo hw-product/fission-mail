@@ -13,5 +13,5 @@ Gem::Specification.new do |s|
   s.add_dependency 'mandrill-api'
   s.add_dependency 'pony'
   s.add_dependency 'mail', '2.5.4'
-  s.files = Dir['**/*']
+  s.files = Dir['{lib}/**/**/*'] + %w(fission-mail.gemspec README.md CHANGELOG.md)
 end
