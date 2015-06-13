@@ -43,11 +43,19 @@ describe Fission::Mail::Mandrill do
   private
 
   def payload
-    h = { :notification_email => {
-            :destination => { :email => DST_ADDR },
-            :origin => { :email => SRC_ADDR, :name => SRC_NAME },
-            :subject => SUBJECT,
-            :message => BODY }}
+    h = {
+      :notification_email => {
+        :destination => {
+          :email => DST_ADDR
+        },
+        :origin => {
+          :email => SRC_ADDR,
+          :name => SRC_NAME
+        },
+        :subject => SUBJECT,
+        :message => BODY
+      }
+    }
     Jackal::Utils.new_payload(:test, h)
   end
 
