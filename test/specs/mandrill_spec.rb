@@ -30,6 +30,13 @@ describe Fission::Mail::Mandrill do
 
   let(:actor) { Carnivore::Supervisor.supervisor[:mail] }
 
+  it 'fails to execute if expected paylod or config is missing' do
+    Carnivore::Config.set(:fission, :mandrill, :api_key, nil)
+    # TODO figure out why we hit an orphan route here / don't get a result back....
+    result = transmit_and_wait(actor, payload, 0.5)
+    result.must_equal nil
+  end
+
   it 'executes with valid payload' do
     result = transmit_and_wait(actor, payload)
     callback_executed?(result).must_equal true

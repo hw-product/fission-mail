@@ -32,7 +32,8 @@ module Fission
 
       def valid?(message)
         super do |payload|
-          retrieve(payload, :data, :notification_email)
+          fission_config[:mandrill][:api_key] &&
+            retrieve(payload, :data, :notification_email)
         end
       end
 
