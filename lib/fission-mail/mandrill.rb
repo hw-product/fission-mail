@@ -40,6 +40,7 @@ module Fission
         failure_wrap(message) do |payload|
           begin
             deliver(payload)
+            payload[:data].delete(:notification_email)
             job_completed(:mail, payload, message)
           rescue Mandrill::Error => e
             error "Delivery failed: #{e.class} - #{e}"

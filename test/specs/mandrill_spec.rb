@@ -40,6 +40,11 @@ describe Fission::Mail::Mandrill do
     arr.each { |key, value| result[:args][key].must_equal value }
   end
 
+  it 'clears payload data after execution' do
+    result = transmit_and_wait(actor, payload)
+    result.get(:data, :notification_email).must_equal nil
+  end
+
   private
 
   def payload
