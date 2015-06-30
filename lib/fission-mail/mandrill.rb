@@ -32,7 +32,8 @@ module Fission
 
       def valid?(message)
         super do |payload|
-          retrieve(payload, :data, :notification_email)
+          fission_config[:mandrill][:api_key] &&
+            retrieve(payload, :data, :notification_email)
         end
       end
 
@@ -40,6 +41,7 @@ module Fission
         failure_wrap(message) do |payload|
           begin
             deliver(payload)
+            payload[:data].delete(:notification_email)
             job_completed(:mail, payload, message)
           rescue Mandrill::Error => e
             error "Delivery failed: #{e.class} - #{e}"
@@ -67,7 +69,7 @@ module Fission
           if(bcc = Carnivore::Config.get(:fission, :mail, :bcc))
             args[:bcc_address] = bcc
           end
-          result = mandrill.messages.send(args, false, 'default')
+          result = mandrill_send(args)
           debug "Send response payload: #{result.inspect}"
           true
         rescue => e
@@ -77,6 +79,10 @@ module Fission
         end
       end
 
+      # Keep API call separate for easy test stubbing
+      def mandrill_send(args)
+        mandrill.messages.send(args, false, 'default')
+      end
     end
   end
 end
